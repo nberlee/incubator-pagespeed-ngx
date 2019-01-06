@@ -79,7 +79,7 @@ FROM alpine:$ALPINE_VERSION AS nginx
 ARG NGX_PAGESPEED_TAG=v1.13.35.2-stable
 
 # Check http://nginx.org/en/download.html for the latest version.
-ARG NGINX_VERSION=1.14.1
+ARG NGINX_VERSION=1.14.2
 ARG NGINX_PGPKEY=520A9993A1C052F8
 ARG NGINX_BUILD_CONFIG="\
         --prefix=/etc/nginx \
@@ -171,10 +171,6 @@ WORKDIR /usr/src/nginx
 
 RUN tar zxf ../nginx-${NGINX_VERSION}.tar.gz --strip-components=1 -C .
 
-COPY patches/ngx/*.patch ./
-
-RUN for i in *.patch; do printf "\r\nApplying patch ${i%%.*}\r\n"; patch -p1 < $i || exit 1; done
-
 RUN ./configure \
         ${NGINX_BUILD_CONFIG} \
         --add-module=/usr/src/ngxpagespeed \
@@ -204,7 +200,7 @@ COPY pagespeed.png /usr/share/nginx/html/
 FROM alpine:$ALPINE_VERSION
 LABEL maintainer="Nico Berlee <nico.berlee@on2it.net>" \
       version.mod-pagespeed="1.13.35.2" \
-      version.nginx="1.14.1" \
+      version.nginx="1.14.2" \
       version.ngx-pagespeed="1.13.35.2"
 
 COPY --from=pagespeed /usr/bin/envsubst /usr/local/bin
